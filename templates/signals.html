@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Bybit Signal Scanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .table-success { background-color: #d1e7dd; }
+        .table-danger { background-color: #f8d7da; }
+        .confidence-high { font-weight: bold; color: #198754; }
+        .confidence-medium { font-weight: bold; color: #fd7e14; }
+        .confidence-low { font-weight: bold; color: #dc3545; }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <h2 class="mb-4 text-center">Bybit Signal Scanner — صفقات 15 دقيقة</h2>
+    <div class="d-flex justify-content-end mb-2">
+        <a href="{{ url_for('refresh') }}" class="btn btn-primary">تحديث الإشارات</a>
+    </div>
+    {% if signals %}
+    <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>الإشارة</th>
+                <th>الزوج</th>
+                <th>السعر الحالي</th>
+                <th>الهدف</th>
+                <th>الوقت</th>
+                <th>نوع الصفقة</th>
+                <th>الرافعة</th>
+                <th>درجة الثقة</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for s in signals %}
+            <tr class="{% if s.direction == 'شراء' %}table-success{% else %}table-danger{% endif %}">
+                <td><b>{{ s.direction }}</b></td>
+                <td>{{ s.symbol }}</td>
+                <td>{{ s.price }} USDT</td>
+                <td>{{ s.target }} USDT ({{ s.target_pct }})</td>
+                <td>{{ s.time }} UTC</td>
+                <td>{{ s.type }}</td>
+                <td>{{ s.leverage }}</td>
+                <td class="
+                    {% if s.confidence == 'عالية' %}confidence-high
+                    {% elif s.confidence == 'متوسطة' %}confidence-medium
+                    {% else %}confidence-low
+                    {% endif %}
+                ">{{ s.confidence }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center mt-4">لا توجد إشارات قوية حالياً.</div>
+    {% endif %}
+</div>
+</body>
+</html>
